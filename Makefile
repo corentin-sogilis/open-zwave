@@ -20,6 +20,23 @@ all:
 	LDFLAGS="$(LDFLAGS)" CPPFLAGS="$(CPPFLAGS)" $(MAKE) -C $(top_srcdir)/cpp/build/ -$(MAKEFLAGS)
 	LDFLAGS="$(LDFLAGS)" CPPFLAGS="$(CPPFLAGS)" $(MAKE) -C $(top_srcdir)/cpp/examples/MinOZW/ -$(MAKEFLAGS)
 
+ANDROID_TOOLCHAIN=$(NDK_HOME)/../../ndk-arm-v7a-toolchain
+
+android: android-ndk-present $(ANDROID_TOOLCHAIN)
+	CROSS_COMPILE=$(ANDROID_TOOLCHAIN)/bin/arm-linux-androideabi-	\
+	USE_HID=0														\
+	LDFLAGS="$(LDFLAGS)"											\
+	CPPFLAGS="$(CPPFLAGS)"											\
+	$(MAKE) -C $(top_srcdir)/cpp/build/ -$(MAKEFLAGS)
+
+android-ndk-present:
+ifeq ($(NDK_HOME),)
+	$(error "Undefined env var NDK_HOME. Please install android NDK and set NDK_HOME to its directory")
+endif
+
+$(ANDROID_TOOLCHAIN):
+	$(shell $(NDK_HOME)/build/tools/make-standalone-toolchain.sh --arch=arm --install-dir=$@)
+
 install:
 	$(MAKE) -C $(top_srcdir)/cpp/build/ -$(MAKEFLAGS) $(MAKECMDGOALS)
 	$(MAKE) -C $(top_srcdir)/cpp/examples/MinOZW/ -$(MAKEFLAGS) $(MAKECMDGOALS)
