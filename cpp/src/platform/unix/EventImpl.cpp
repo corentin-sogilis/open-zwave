@@ -30,6 +30,7 @@
 
 #include <stdio.h>
 #include <sys/time.h>
+#include "fix_pthread.h"
 
 using namespace OpenZWave;
 
@@ -208,12 +209,11 @@ bool EventImpl::Wait
             
 			while( !m_isSignaled )
 			{
-				int oldstate;
-				pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, &oldstate);
+				fix_pthread_cancel_enable();
 
 				err = pthread_cond_timedwait( &m_condition, &m_lock, &abstime );
 
-				pthread_setcancelstate(PTHREAD_CANCEL_DISABLE, &oldstate);
+				fix_pthread_cancel_disable();
 
 				if( err == ETIMEDOUT )
 				{
@@ -236,12 +236,11 @@ bool EventImpl::Wait
 		{
 			while( !m_isSignaled )
 			{
-				int oldstate;
-				pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, &oldstate);
+				fix_pthread_cancel_enable();
 
 				err = pthread_cond_wait( &m_condition, &m_lock );
 
-				pthread_setcancelstate(PTHREAD_CANCEL_DISABLE, &oldstate);
+				fix_pthread_cancel_disable();
 
 				if( err != 0 )
 				{
