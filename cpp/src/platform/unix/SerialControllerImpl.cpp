@@ -33,6 +33,7 @@
 #include "platform/Event.h"
 #include "SerialControllerImpl.h"
 #include "platform/Log.h"
+#include "fix_pthread.h"
 
 #ifdef __sun
 // SunOS doesn't have the cfsetspeed convenience function.
@@ -341,7 +342,6 @@ void SerialControllerImpl::Read
 		{
 			struct timeval *whenp;
 			fd_set rds, eds;
-			int oldstate;
 
 			FD_ZERO( &rds );
 			FD_SET( m_hSerialController, &rds );
@@ -349,9 +349,9 @@ void SerialControllerImpl::Read
 			FD_SET( m_hSerialController, &eds );
 			whenp = NULL;
 
-			pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, &oldstate);
+			fix_pthread_cancel_enable();
 			err = select( m_hSerialController + 1, &rds, NULL, &eds, whenp );
-			pthread_setcancelstate(PTHREAD_CANCEL_DISABLE, &oldstate);
+			fix_pthread_cancel_disable();
 		} while( err <= 0 );
 	}
 }
