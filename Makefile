@@ -35,7 +35,7 @@ ifeq ($(NDK_HOME),)
 endif
 
 $(ANDROID_TOOLCHAIN):
-	$(shell $(NDK_HOME)/build/tools/make-standalone-toolchain.sh --arch=arm --install-dir=$@)
+	$(shell $(NDK_HOME)/build/tools/make_standalone_toolchain.py --api 21 --arch=arm --install-dir=$@)
 
 install:
 	$(MAKE) -C $(top_srcdir)/cpp/build/ -$(MAKEFLAGS) $(MAKECMDGOALS)
