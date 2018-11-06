@@ -28,13 +28,9 @@
 #include <string>
 #include <cstring>
 #include <pthread.h>
-#include <iostream>
+#include <android/log.h>
 #include "Defs.h"
 #include "LogImpl.h"
-
-#include <android/log.h>
-
-#define APPNAME "(JNI) OpenZWave"
 
 using namespace OpenZWave;
 
@@ -44,18 +40,16 @@ using namespace OpenZWave;
 //-----------------------------------------------------------------------------
 LogImpl::LogImpl
 (
-		string const& _filename,
-		bool const _bAppendLog,
-		bool const _bConsoleOutput,
+		string const _filename_UNUSED,
+		bool const _bAppend_UNUSED,
+		bool const _bConsoleOutput_UNUSED,
 		LogLevel const _saveLevel,
 		LogLevel const _queueLevel,
 		LogLevel const _dumpTrigger
 ):
-m_filename( _filename ),					// name of log file
 m_saveLevel( _saveLevel ),					// level of messages to log to file
 m_queueLevel( _queueLevel ),				// level of messages to log to queue
-m_dumpTrigger( _dumpTrigger ),				// dump queued messages when this level is seen
-pFile( NULL )
+m_dumpTrigger( _dumpTrigger )				// dump queued messages when this level is seen
 {
 }
 
@@ -176,55 +170,6 @@ void LogImpl::SetLoggingState
 }
 
 //-----------------------------------------------------------------------------
-//	<LogImpl::GetTimeStampString>
-//	Generate a string with formatted current time
-//-----------------------------------------------------------------------------
-string LogImpl::GetTimeStampString
-(
-)
-{
-	// Get a timestamp
-	struct timeval tv;
-	gettimeofday(&tv, NULL);
-	struct tm *tm;
-	tm = localtime( &tv.tv_sec );
-
-	// create a time stamp string for the log message
-	char buf[100];
-	snprintf( buf, sizeof(buf), "%04d-%02d-%02d %02d:%02d:%02d.%03d ",
-			tm->tm_year + 1900, tm->tm_mon + 1, tm->tm_mday,
-			tm->tm_hour, tm->tm_min, tm->tm_sec, (int)tv.tv_usec / 1000 );
-	string str = buf;
-	return str;
-}
-
-//-----------------------------------------------------------------------------
-//	<LogImpl::GetNodeString>
-//	Generate a string with formatted node id
-//-----------------------------------------------------------------------------
-string LogImpl::GetNodeString
-(
-		uint8 const _nodeId
-)
-{
-	if( _nodeId == 0 )
-	{
-		return "";
-	}
-	else
-		if( _nodeId == 255 ) // should make distinction between broadcast and controller better for SwitchAll broadcast
-		{
-			return "contrlr, ";
-		}
-		else
-		{
-			char buf[20];
-			snprintf( buf, sizeof(buf), "Node%03d, ", _nodeId );
-			return buf;
-		}
-}
-
-//-----------------------------------------------------------------------------
 //	<LogImpl::GetThreadId>
 //	Generate a string with formatted thread id
 //-----------------------------------------------------------------------------
@@ -247,24 +192,5 @@ void LogImpl::SetLogFileName
 		const string &_filename
 )
 {
-	m_filename = _filename;
-}
-
-
-//-----------------------------------------------------------------------------
-//	<LogImpl::GetLogLevelString>
-//	Provide a new log file name (applicable to future writes)
-//-----------------------------------------------------------------------------
-string LogImpl::GetLogLevelString
-(
-		LogLevel _level
-)
-{
-	if ((_level >= LogLevel_None) && (_level <= LogLevel_Internal)) {
-		char buf[20];
-		snprintf( buf, sizeof(buf), "%s, ", LogLevelString[_level] );
-		return buf;
-	}
-	else
-		return "Unknown, ";
+	// Nothing to do
 }

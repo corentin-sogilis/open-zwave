@@ -35,6 +35,8 @@
 #include <list>
 #include "platform/Log.h"
 
+#define APPNAME "(JNI) OpenZWave"
+
 namespace OpenZWave
 {
 	class LogImpl : public i_LogImpl
@@ -42,7 +44,7 @@ namespace OpenZWave
 	private:
 		friend class Log;
 
-		LogImpl( string const& _filename, bool const _bAppendLog, bool const _bConsoleOutput, LogLevel const _saveLevel, LogLevel const _queueLevel, LogLevel const _dumpTrigger );
+		LogImpl( string const _filename_UNUSED, bool const _bAppend_UNUSED, bool const _bConsoleOutput_UNUSED, LogLevel const _saveLevel, LogLevel const _queueLevel, LogLevel const _dumpTrigger );
 		~LogImpl();
 
 		void Write( LogLevel _level, uint8 const _nodeId, char const* _format, va_list _args );
@@ -51,17 +53,11 @@ namespace OpenZWave
 		void SetLoggingState( LogLevel _saveLevel, LogLevel _queueLevel, LogLevel _dumpTrigger );
 		void SetLogFileName( const string &_filename );
 
-		string GetTimeStampString();
-		string GetNodeString( uint8 const _nodeId );
 		string GetThreadId();
-		string GetLogLevelString(LogLevel _level);
 
-
-		string m_filename;						/**< filename specified by user (default is ozw_log.txt) */
 		LogLevel m_saveLevel;
 		LogLevel m_queueLevel;
 		LogLevel m_dumpTrigger;
-		FILE* pFile;
 	};
 
 } // namespace OpenZWave
