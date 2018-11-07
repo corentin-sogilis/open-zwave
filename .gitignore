@@ -39,3 +39,5 @@ OZWForm.vshost.exe.manifest
 .distfiles
 .idea/*
 ozw_config
+build
+jniLibs
