@@ -30,6 +30,7 @@
 #include "platform/Event.h"
 #include "platform/Thread.h"
 #include "ThreadImpl.h"
+#include "fix_pthread.h"
 
 #ifdef DARWIN
 #define pthread_yield pthread_yield_np
@@ -51,6 +52,7 @@ ThreadImpl::ThreadImpl
 	m_bIsRunning( false ),
 	m_name( _tname )
 {
+	fix_pthread_install_cancel_handler();
 }
 
 //-----------------------------------------------------------------------------
@@ -86,7 +88,11 @@ bool ThreadImpl::Start
 	m_exitEvent = _exitEvent;
 	m_exitEvent->Reset();
 
+	// XXX : We temporary mask the signal replacing cancel so the new thread will
+	//       inherit the sigmask
+	fix_pthread_cancel_disable();
 	pthread_create ( &m_hThread, &ta, ThreadImpl::ThreadProc, this );
+	fix_pthread_cancel_enable();
 	//fprintf(stderr, "thread %s starting %08x\n", m_name.c_str(), m_hThread);
 	//fflush(stderr);
 
@@ -117,7 +123,7 @@ bool ThreadImpl::Terminate
 
 	//m_hThread = NULL;
 	m_bIsRunning = false;
-	pthread_cancel( m_hThread );
+	fix_pthread_cancel_thread(m_hThread);
 	pthread_join( m_hThread, &data );
 
 	return true;
