@@ -33,6 +33,8 @@
 
 #ifdef WIN32
 #include "platform/windows/LogImpl.h"	// Platform-specific implementation of a log
+#elif defined ANDROID
+#include "platform/android/LogImpl.h"	// Platform-specific implementation of a log
 #elif defined WINRT
 #include "platform/winRT/LogImpl.h"	// Platform-specific implementation of a log
 #else

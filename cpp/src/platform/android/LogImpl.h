@@ -35,6 +35,8 @@
 #include <list>
 #include "platform/Log.h"
 
+#define APPNAME "(JNI) OpenZWave"
+
 namespace OpenZWave
 {
 	class LogImpl : public i_LogImpl
@@ -42,31 +44,20 @@ namespace OpenZWave
 	private:
 		friend class Log;
 
-		LogImpl( string const& _filename, bool const _bAppendLog, bool const _bConsoleOutput, LogLevel const _saveLevel, LogLevel const _queueLevel, LogLevel const _dumpTrigger );
+		LogImpl( string const _filename_UNUSED, bool const _bAppend_UNUSED, bool const _bConsoleOutput_UNUSED, LogLevel const _saveLevel, LogLevel const _queueLevel, LogLevel const _dumpTrigger );
 		~LogImpl();
 
 		void Write( LogLevel _level, uint8 const _nodeId, char const* _format, va_list _args );
-		void Queue( char const* _buffer );
 		void QueueDump();
 		void QueueClear();
 		void SetLoggingState( LogLevel _saveLevel, LogLevel _queueLevel, LogLevel _dumpTrigger );
 		void SetLogFileName( const string &_filename );
 
-		string GetTimeStampString();
-		string GetNodeString( uint8 const _nodeId );
 		string GetThreadId();
-		string GetLogLevelString(LogLevel _level);
-		unsigned int toEscapeCode(LogLevel _level);
 
-
-		string m_filename;						/**< filename specified by user (default is ozw_log.txt) */
-		bool m_bConsoleOutput;					/**< if true, send log output to console as well as to the file */
-		bool m_bAppendLog;						/**< if true, the log file should be appended to any with the same name */
-		list<string> m_logQueue;				/**< list of queued log messages */
 		LogLevel m_saveLevel;
 		LogLevel m_queueLevel;
 		LogLevel m_dumpTrigger;
-		FILE* pFile;
 	};
 
 } // namespace OpenZWave
